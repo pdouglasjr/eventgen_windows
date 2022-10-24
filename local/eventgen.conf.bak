@@ -1,0 +1,97 @@
+
+
+#### Sample specific settings
+## replace @@AuditType
+#token.token = Type=(Success|Failure)\s+Audit
+#token.replacementType = file
+#token.replacement = $SPLUNK_HOME/etc/apps/TA-microsoft-windows/samples/audit_types.list
+
+##################################################
+## Anomalous events
+##################################################
+
+[Security.1102.windows]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = WinEventLog:Security
+interval = 3600
+## Generate all events in sample
+count = 0
+
+[Security.4726.windows]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = WinEventLog:Security
+interval = 900
+## Generate all events in sample
+count = 0
+
+[Security.4743.windows]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = WinEventLog:Security
+interval = 900
+## Generate all events in sample
+count = 0
+
+[Security.4624.windows]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = WinEventLog:Security
+interval = 10
+## replace @@user
+token.0.token = @@user
+token.0.replacementType = file
+token.0.replacement = $SPLUNK_HOME/etc/apps/SA-Eventgen/samples/dist.all.last
+
+[Security.4672.windows]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = WinEventLog:Security
+interval = 10
+## replace @@user
+token.0.token = @@user
+token.0.replacementType = file
+token.0.replacement = $SPLUNK_HOME/etc/apps/SA-Eventgen/samples/dist.all.last
+
+#### Default replacements for all WinRegistry logs
+[.*\.winregistry]
+index = windows
+source = WinRegistry
+sourcetype = WinRegistry
+breaker = ^\d{2}\/\d{2}\/\d{2,4}\s+\d{2}:\d{2}:\d{2}\.\d+
+interval = 300
+count = 10
+earliest = -5m
+latest = now
+
+## replace timestamp 09/09/2010 23:36:32.0128
+token.0.token = ^(\d{2}\/\d{2}\/\d{2,4}\s+\d{2}:\d{2}:\d{2})\.\d+
+token.0.replacementType = timestamp
+token.0.replacement = %m/%d/%Y %H:%M:%S
+
+[WinHostMon-OperatingSystem]
+index = windows
+sourcetype = WinHostMon
+source = OperatingSystem
+count = 0
+bundlelines = true
+
+[WinHostMon-Processor]
+index = windows
+sourcetype = Processor
+source = Computer
+count = 0
+bundlelines = true
+
+[XmlSecurity\.[0-9]*\.windows\.xml]
+index = wineventlog
+source = WinEventLog:Security
+sourcetype = XmlWinEventLog:Security
+breaker = ^<\/Events>$
+
+[XmlSystem.update_.*\.xml]
+index = wineventlog
+source = WinEventLog:System
+sourcetype = XmlWinEventLog:System
+breaker = ^<\/Events>$
